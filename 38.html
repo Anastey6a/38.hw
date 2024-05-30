@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Погода</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f0f0f0;
+            color: #333;
+            margin: 0;
+            padding: 0;
+        }
+
+        #weatherData {
+            background-color: #fff;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            padding: 20px;
+            margin: 50px auto;
+            max-width: 500px;
+        }
+
+        h1 {
+            text-align: center;
+            color: #007bff;
+        }
+
+        p {
+            font-size: 18px;
+            line-height: 1.6;
+            margin-bottom: 10px;
+        }
+
+        img {
+            display: block;
+            margin: 20px auto;
+        }
+    </style>
+</head>
+<body>
+    <h1>Погода у місті</h1>
+    <div id="weatherData">
+        <!-- Сюди буде виводитися погода -->
+    </div>
+
+    <script>
+        // Функція для виконання AJAX-запиту
+        function getWeather(city) {
+            // URL для запиту з параметрами
+            let url = 'http://api.openweathermap.org/data/2.5/weather?q=' + city + '&units=metric&APPID=5d066958a60d315387d9492393935c19';
+
+            // Створюємо об'єкт XMLHttpRequest
+            let xhr = new XMLHttpRequest();
+
+            // Налаштовуємо обробник події, який виконається при успішному отриманні відповіді
+            xhr.onreadystatechange = function() {
+                if (xhr.readyState == 4 && xhr.status == 200) {
+                    // Розпарсимо JSON відповідь
+                    let data = JSON.parse(xhr.responseText);
+                    
+                    // Отримуємо необхідні дані з об'єкту data
+                    let temperature = data.main.temp;
+                    let pressure = data.main.pressure;
+                    let description = data.weather[0].description;
+                    let humidity = data.main.humidity;
+                    let windSpeed = data.wind.speed;
+                    let windDirection = data.wind.deg;
+                    let iconCode = data.weather[0].icon;
+                    let iconUrl = 'http://openweathermap.org/img/w/' + iconCode + '.png';
+
+                    // Формуємо рядок з погодовими даними
+                    let weatherInfo = '<p>Температура: ' + temperature + ' &deg;C</p>' +
+                                      '<p>Тиск: ' + pressure + ' мм рт. ст.</p>' +
+                                      '<p>Опис: ' + description + '</p>' +
+                                      '<p>Вологість: ' + humidity + '%</p>' +
+                                      '<p>Швидкість вітру: ' + windSpeed + ' м/с</p>' +
+                                      '<p>Напрям вітру: ' + windDirection + '&deg;</p>' +
+                                      '<img src="' + iconUrl + '" alt="icon">';
+
+                    // Виводимо погодові дані на сторінку
+                    document.getElementById('weatherData').innerHTML = weatherInfo;
+                }
+            };
+
+            // Відкриваємо запит
+            xhr.open('GET', url, true);
+
+            // Відправляємо запит
+            xhr.send();
+        }
+
+        // Викликаємо функцію getWeather з назвою міста
+        getWeather('LVIV');
+    </script>
+</body>
+</html>
+
